@@ -1,0 +1,26 @@
+{
+  "name": "clerk-platform-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Clerk Platform API integration",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "bun run dist/index.js",
+    "start:http": "bun run dist/index.js --http",
+    "dev": "bun run --watch src/index.ts",
+    "dev:http": "bun run --watch src/index.ts --http",
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "express": "^4.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}
