@@ -10,11 +10,15 @@ import {
   CreateApplicationSchema,
   UpdateApplicationSchema,
   DeleteApplicationSchema,
+  UploadApplicationAssetSchema,
+  DeleteApplicationAssetSchema,
   type ListApplicationsInput,
   type GetApplicationInput,
   type CreateApplicationInput,
   type UpdateApplicationInput,
   type DeleteApplicationInput,
+  type UploadApplicationAssetInput,
+  type DeleteApplicationAssetInput,
 } from "../schemas.js";
 import type {
   ListApplicationsResponse,
@@ -23,6 +27,11 @@ import type {
 } from "../types.js";
 
 export function registerApplicationTools(server: McpServer): void {
+  const decodeBase64 = (value: string): Uint8Array => {
+    const cleaned = value.includes(",") ? value.split(",")[1] : value;
+    return Uint8Array.from(atob(cleaned), c => c.charCodeAt(0));
+  };
+
   // List Applications
   server.registerTool(
     "clerk_list_applications",
@@ -266,6 +275,144 @@ Example:
       try {
         const data = await makeApiRequest<DeletedObjectResponse>(
           `platform/applications/${params.application_id}`,
+          "DELETE"
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Upload Application Logo
+  server.registerTool(
+    "clerk_upload_application_logo",
+    {
+      title: "Upload Application Logo",
+      description: "Upload and set an application's logo using base64-encoded image bytes.",
+      inputSchema: UploadApplicationAssetSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    async (params: UploadApplicationAssetInput) => {
+      try {
+        const data = await makeApiRequest<ApplicationResponse>(
+          `platform/applications/${params.application_id}/logo`,
+          "POST",
+          decodeBase64(params.file_base64),
+          undefined,
+          { "Content-Type": "application/octet-stream" }
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Delete Application Logo
+  server.registerTool(
+    "clerk_delete_application_logo",
+    {
+      title: "Delete Application Logo",
+      description: "Delete an application's logo.",
+      inputSchema: DeleteApplicationAssetSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (params: DeleteApplicationAssetInput) => {
+      try {
+        const data = await makeApiRequest<ApplicationResponse>(
+          `platform/applications/${params.application_id}/logo`,
+          "DELETE"
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Upload Application Favicon
+  server.registerTool(
+    "clerk_upload_application_favicon",
+    {
+      title: "Upload Application Favicon",
+      description: "Upload and set an application's favicon using base64-encoded image bytes.",
+      inputSchema: UploadApplicationAssetSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    async (params: UploadApplicationAssetInput) => {
+      try {
+        const data = await makeApiRequest<ApplicationResponse>(
+          `platform/applications/${params.application_id}/favicon`,
+          "POST",
+          decodeBase64(params.file_base64),
+          undefined,
+          { "Content-Type": "application/octet-stream" }
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Delete Application Favicon
+  server.registerTool(
+    "clerk_delete_application_favicon",
+    {
+      title: "Delete Application Favicon",
+      description: "Delete an application's favicon.",
+      inputSchema: DeleteApplicationAssetSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (params: DeleteApplicationAssetInput) => {
+      try {
+        const data = await makeApiRequest<ApplicationResponse>(
+          `platform/applications/${params.application_id}/favicon`,
           "DELETE"
         );
 

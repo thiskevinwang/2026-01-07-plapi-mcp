@@ -23,6 +23,9 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { registerApplicationTools } from "./tools/applications.js";
 import { registerDomainTools } from "./tools/domains.js";
 import { registerTransferTools } from "./tools/transfers.js";
+import { registerUserTools } from "./tools/users.js";
+import { registerJWTTemplateTools } from "./tools/jwt-templates.js";
+import { registerConfigTools } from "./tools/config.js";
 import { setApiContext } from "./api.js";
 
 // Create MCP server instance
@@ -35,6 +38,9 @@ const server = new McpServer({
 registerApplicationTools(server);
 registerDomainTools(server);
 registerTransferTools(server);
+registerUserTools(server);
+registerJWTTemplateTools(server);
+registerConfigTools(server);
 
 /**
  * Extract Bearer token from Authorization header
