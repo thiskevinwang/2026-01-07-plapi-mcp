@@ -5,6 +5,7 @@
 import type { ClerkErrorsResponse } from "./types.js";
 
 const API_BASE_URL = "https://api.clerk.com/v1";
+type RequestBodyData = string | FormData | ArrayBuffer | Uint8Array;
 
 export class ClerkAPIError extends Error {
   constructor(
@@ -121,7 +122,7 @@ export async function makeApiRequest<T>(
       ? undefined
       : shouldSerializeJson
         ? JSON.stringify(data)
-        : data as never,
+        : data as RequestBodyData,
   });
 
   if (!response.ok) {

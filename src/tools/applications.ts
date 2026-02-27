@@ -28,8 +28,12 @@ import type {
 
 export function registerApplicationTools(server: McpServer): void {
   const decodeBase64 = (value: string): Uint8Array => {
-    const cleaned = value.includes(",") ? value.split(",")[1] : value;
-    return Uint8Array.from(atob(cleaned), c => c.charCodeAt(0));
+    try {
+      const cleaned = value.includes(",") ? value.split(",")[1] : value;
+      return Uint8Array.from(atob(cleaned), c => c.charCodeAt(0));
+    } catch {
+      throw new Error("Invalid base64 file content provided.");
+    }
   };
 
   // List Applications
