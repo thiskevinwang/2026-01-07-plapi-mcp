@@ -61,6 +61,7 @@ export interface CNAMETarget {
 // Update Domain Request
 export interface UpdateDomainRequest {
   name: string;
+  proxy_path?: string;
 }
 
 // Failure Hint
@@ -124,6 +125,12 @@ export interface DNSCheckResponse extends DomainStatusResponse {
   last_run_at: number | null;
 }
 
+// List Application Domains Response
+export interface ListApplicationDomainsResponse {
+  data: DomainResponse[];
+  total_count: number;
+}
+
 // Application Transfer Response
 export interface ApplicationTransferResponse {
   object: "application_transfer";
@@ -141,6 +148,66 @@ export interface ApplicationTransferResponse {
 export interface ListApplicationTransfersResponse {
   data: ApplicationTransferResponse[];
   total_count: number;
+}
+
+// User Response
+export interface UserResponse {
+  id: string;
+  object: "user";
+  external_id: string | null;
+  username: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  email_addresses: unknown[];
+  phone_numbers: unknown[];
+  web3_wallets: unknown[];
+  passkeys: unknown[];
+  banned: boolean;
+  locked: boolean;
+  updated_at: number;
+  created_at: number;
+}
+
+// List Instance Users Response
+export interface ListInstanceUsersResponse {
+  data: UserResponse[];
+  total_count: number;
+}
+
+// JWT Template
+export interface JWTTemplateResponse {
+  object: "jwt_template";
+  id: string;
+  name: string;
+  claims: Record<string, unknown>;
+  lifetime: number;
+  allowed_clock_skew: number;
+  custom_signing_key: boolean;
+  signing_algorithm: string;
+  created_at: number;
+  updated_at: number;
+}
+
+// Config responses
+export interface ConfigSchemaResponse {
+  $schema?: string;
+  $id?: string;
+  type?: string;
+  properties?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface ConfigResponse {
+  config_version?: string;
+  [key: string]: unknown;
+}
+
+export interface ConfigPatchResponse {
+  config_version?: string;
+  dry_run?: boolean;
+  before?: Record<string, unknown>;
+  after?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 // Clerk Error

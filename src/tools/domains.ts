@@ -9,18 +9,59 @@ import {
   GetApplicationDomainStatusSchema,
   TriggerDNSCheckSchema,
   UpdateApplicationDomainSchema,
+  ListApplicationDomainsSchema,
+  CreateApplicationDomainSchema,
+  DeleteApplicationDomainSchema,
   type GetApplicationDomainInput,
   type GetApplicationDomainStatusInput,
   type TriggerDNSCheckInput,
   type UpdateApplicationDomainInput,
+  type ListApplicationDomainsInput,
+  type CreateApplicationDomainInput,
+  type DeleteApplicationDomainInput,
 } from "../schemas.js";
 import type {
   DomainResponse,
   DomainStatusResponse,
   DNSCheckResponse,
+  DeletedObjectResponse,
+  ListApplicationDomainsResponse,
 } from "../types.js";
 
 export function registerDomainTools(server: McpServer): void {
+  // Get Application Domain
+  server.registerTool(
+    "clerk_list_application_domains",
+    {
+      title: "List Application Domains",
+      description: "List all domains for an application's production instance.",
+      inputSchema: ListApplicationDomainsSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (params: ListApplicationDomainsInput) => {
+      try {
+        const data = await makeApiRequest<ListApplicationDomainsResponse>(
+          `platform/applications/${params.application_id}/domains`,
+          "GET"
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
   // Get Application Domain
   server.registerTool(
     "clerk_get_application_domain",
@@ -57,6 +98,43 @@ Example:
         const data = await makeApiRequest<DomainResponse>(
           `platform/applications/${params.application_id}/domains/${params.domain_id_or_name}`,
           "GET"
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Create Application Domain
+  server.registerTool(
+    "clerk_create_application_domain",
+    {
+      title: "Create Application Domain",
+      description: "Create a provider domain for an application's production instance.",
+      inputSchema: CreateApplicationDomainSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    async (params: CreateApplicationDomainInput) => {
+      try {
+        const requestBody: Record<string, unknown> = { name: params.name };
+        if (params.proxy_path) requestBody.proxy_path = params.proxy_path;
+
+        const data = await makeApiRequest<DomainResponse>(
+          `platform/applications/${params.application_id}/domains`,
+          "POST",
+          requestBody
         );
 
         return {
@@ -209,6 +287,39 @@ Example:
           `platform/applications/${params.application_id}/domain`,
           "PATCH",
           { name: params.name }
+        );
+
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text" as const, text: handleApiError(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Delete Application Domain
+  server.registerTool(
+    "clerk_delete_application_domain",
+    {
+      title: "Delete Application Domain",
+      description: "Delete a provider domain from an application's production instance.",
+      inputSchema: DeleteApplicationDomainSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (params: DeleteApplicationDomainInput) => {
+      try {
+        const data = await makeApiRequest<DeletedObjectResponse>(
+          `platform/applications/${params.application_id}/domains/${params.domain_id_or_name}`,
+          "DELETE"
         );
 
         return {

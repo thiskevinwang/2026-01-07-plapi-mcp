@@ -12,9 +12,14 @@ An MCP (Model Context Protocol) server for interacting with the [Clerk Platform 
 - **clerk_create_application** - Create a new application
 - **clerk_update_application** - Update an application's name
 - **clerk_delete_application** - Delete an application (destructive)
+- **clerk_upload_application_logo** / **clerk_delete_application_logo** - Manage application logo
+- **clerk_upload_application_favicon** / **clerk_delete_application_favicon** - Manage application favicon
 
 ### Domain Management
+- **clerk_list_application_domains** - List domains for an application
+- **clerk_create_application_domain** - Create a provider domain
 - **clerk_get_application_domain** - Get domain configuration
+- **clerk_delete_application_domain** - Delete a provider domain
 - **clerk_get_application_domain_status** - Check domain verification status
 - **clerk_update_application_domain** - Set/update production domain
 - **clerk_trigger_dns_check** - Trigger DNS verification
@@ -24,6 +29,23 @@ An MCP (Model Context Protocol) server for interacting with the [Clerk Platform 
 - **clerk_create_application_transfer** - Initiate an application transfer
 - **clerk_get_application_transfer** - Get transfer details
 - **clerk_cancel_application_transfer** - Cancel a pending transfer
+
+### Instance Users
+- **clerk_list_instance_users** - List users in an instance
+- **clerk_ban_instance_user** - Ban a user in an instance
+- **clerk_unban_instance_user** - Unban a user in an instance
+
+### JWT Templates
+- **clerk_list_jwt_templates** - List JWT templates
+- **clerk_create_jwt_template** - Create a JWT template
+- **clerk_get_jwt_template** - Get a JWT template
+- **clerk_update_jwt_template** - Update a JWT template
+- **clerk_delete_jwt_template** - Delete a JWT template
+
+### Instance Config
+- **clerk_get_config_schema** - Get config schema
+- **clerk_get_config** - Get config values
+- **clerk_patch_config** - Patch config values
 
 ## Installation
 
@@ -169,7 +191,14 @@ This server implements the [Clerk Platform API](https://api.clerk.com/v1) endpoi
 - `GET /platform/applications/{id}` - Get application
 - `PATCH /platform/applications/{id}` - Update application
 - `DELETE /platform/applications/{id}` - Delete application
+- `POST /platform/applications/{id}/logo` - Upload application logo
+- `DELETE /platform/applications/{id}/logo` - Delete application logo
+- `POST /platform/applications/{id}/favicon` - Upload application favicon
+- `DELETE /platform/applications/{id}/favicon` - Delete application favicon
+- `GET /platform/applications/{id}/domains` - List application domains
+- `POST /platform/applications/{id}/domains` - Create application domain
 - `GET /platform/applications/{id}/domains/{domain}` - Get domain
+- `DELETE /platform/applications/{id}/domains/{domain}` - Delete domain
 - `GET /platform/applications/{id}/domains/{domain}/status` - Get domain status
 - `PATCH /platform/applications/{id}/domain` - Update domain
 - `POST /platform/applications/{id}/domains/{domain}/dns_check` - Trigger DNS check
@@ -177,6 +206,17 @@ This server implements the [Clerk Platform API](https://api.clerk.com/v1) endpoi
 - `POST /platform/applications/{id}/transfers` - Create transfer
 - `GET /platform/applications/{id}/transfers/{transferId}` - Get transfer
 - `DELETE /platform/applications/{id}/transfers/{transferId}` - Cancel transfer
+- `GET /platform/applications/{id}/instances/{envOrInsID}/users` - List instance users
+- `POST /platform/applications/{id}/instances/{envOrInsID}/users/{userId}/ban` - Ban user
+- `POST /platform/applications/{id}/instances/{envOrInsID}/users/{userId}/unban` - Unban user
+- `GET /platform/applications/{id}/instances/{envOrInsID}/jwt_templates` - List JWT templates
+- `POST /platform/applications/{id}/instances/{envOrInsID}/jwt_templates` - Create JWT template
+- `GET /platform/applications/{id}/instances/{envOrInsID}/jwt_templates/{templateId}` - Get JWT template
+- `PATCH /platform/applications/{id}/instances/{envOrInsID}/jwt_templates/{templateId}` - Update JWT template
+- `DELETE /platform/applications/{id}/instances/{envOrInsID}/jwt_templates/{templateId}` - Delete JWT template
+- `GET /platform/applications/{id}/instances/{envOrInsID}/config/schema` - Get config schema
+- `GET /platform/applications/{id}/instances/{envOrInsID}/config` - Get config
+- `PATCH /platform/applications/{id}/instances/{envOrInsID}/config` - Patch config
 
 ## License
 

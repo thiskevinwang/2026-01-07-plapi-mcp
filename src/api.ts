@@ -5,6 +5,7 @@
 import type { ClerkErrorsResponse } from "./types.js";
 
 const API_BASE_URL = "https://api.clerk.com/v1";
+type RequestBodyData = string | FormData | ArrayBuffer | Uint8Array;
 
 export class ClerkAPIError extends Error {
   constructor(
@@ -74,8 +75,9 @@ function getApiKey(): string {
 export async function makeApiRequest<T>(
   endpoint: string,
   method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
-  data?: Record<string, unknown>,
-  params?: Record<string, string | number | boolean | string[] | undefined>
+  data?: unknown,
+  params?: Record<string, string | number | boolean | string[] | undefined>,
+  extraHeaders?: Record<string, string>
 ): Promise<T> {
   const apiKey = getApiKey();
   
@@ -97,16 +99,30 @@ export async function makeApiRequest<T>(
   const headers: Record<string, string> = {
     "Authorization": `Bearer ${apiKey}`,
     "Accept": "application/json",
+    ...extraHeaders,
   };
 
-  if (data) {
+  const shouldSerializeJson =
+    data !== undefined &&
+    !headers["Content-Type"] &&
+    typeof data === "object" &&
+    data !== null &&
+    !(data instanceof FormData) &&
+    !(data instanceof ArrayBuffer) &&
+    !ArrayBuffer.isView(data);
+
+  if (shouldSerializeJson) {
     headers["Content-Type"] = "application/json";
   }
 
   const response = await fetch(url.toString(), {
     method,
     headers,
-    body: data ? JSON.stringify(data) : undefined,
+    body: data === undefined
+      ? undefined
+      : shouldSerializeJson
+        ? JSON.stringify(data)
+        : data as RequestBodyData,
   });
 
   if (!response.ok) {
